@@ -14,7 +14,7 @@ app.use(express.json())
 app.use('/ping',(req,res)=>{
     res.status(200).json({
         success: true,
-        message: "pong"
+        message: "pong__"
     })
 })
 
