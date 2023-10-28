@@ -40,8 +40,49 @@ const signup = async (req,res) => {
             message: 'User created successfully !'
         })
     } catch (error) {
-        console.log(error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
-export {signup}
+
+const signin = async (req,res) => {
+    try {
+        const {userName,password} = req.body
+
+        if(!userName || !password){
+            res.status(500).json({
+                success: false,
+                message: 'All fields are required'
+            })
+        }
+
+        // here we need to explicitly get the password since it was not selected by default in the user-schema
+
+        const existingUser = await user.findOne({userName}).select('+password')
+
+        if(!existingUser || password !== existingUser.password){
+            res.status(500).json({
+                success: false,
+                message: 'username and password wont match !'
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Logged in successfully !',
+            existingUser
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
+export {signup,signin}

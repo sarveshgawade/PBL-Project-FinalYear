@@ -22,4 +22,10 @@ app.use('/ping',(req,res)=>{
 
 app.use('/user',userRoute)
 
+
+
+// for wrong requests
+app.all('*',(req,res)=>{    // if somebody enters url other than any route defined here 
+    res.status(404).send(`Oops ! Page 404 not found !`)
+})
 export default app
