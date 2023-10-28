@@ -6,7 +6,7 @@ config()
 const PORT = process.env.PORT || 5555
 
 app.listen(PORT,()=>{
-    console.log(`Listening at port: ${PORT}`);
+    console.log(`Server listening at port: ${PORT}`);
 })
 
 

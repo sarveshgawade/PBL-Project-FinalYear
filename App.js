@@ -1,6 +1,8 @@
 import express from "express";
 import connectToDB from "./config/dbConnection.js";
 
+import userRoute from './routes/userRoutes.js'
+
 const app = express()
 
 // connecting with DB
@@ -17,5 +19,7 @@ app.use('/ping',(req,res)=>{
         message: "pong__"
     })
 })
+
+app.use('/user',userRoute)
 
 export default app
