@@ -116,5 +116,24 @@ const signin = async (req,res) => {
     }
 }
 
+const logout = async (req,res) => {
+    try {
+        res.cookie('token',null,{
+            httpOnly: true,
+            maxAge: 0 ,
+            secure: true
+        })
 
-export {signup,signin}
+        res.status(200).json({
+            success :true ,
+            message: `User logged out successfully`
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export {signup,signin,logout}
