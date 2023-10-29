@@ -136,4 +136,27 @@ const logout = async (req,res) => {
     }
 }
 
-export {signup,signin,logout}
+
+const getProfile = async (req,res) => {
+    try {
+        // getting userId from auth-middleware
+        const userId = req.user.id
+        
+        const existingUser = await user.findById(userId)
+
+        res.status(200).json({
+            success: true,
+            message: 'User details found',
+            existingUser
+        })
+    } catch (error) {
+        res.status(200).json({
+            success :false ,
+            message: error.message
+        })
+    }
+}
+
+
+
+export {signup,signin,logout,getProfile}

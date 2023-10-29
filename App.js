@@ -2,6 +2,7 @@ import express from "express";
 import connectToDB from "./config/dbConnection.js";
 
 import userRoute from './routes/userRoutes.js'
+import cookieParser from "cookie-parser";
 
 const app = express()
 
@@ -10,6 +11,8 @@ connectToDB()
 
 // middleware
 app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({extended:true}))
 
 
 // routes
