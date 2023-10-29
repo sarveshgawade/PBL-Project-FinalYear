@@ -1,5 +1,9 @@
 import mongoose,{model} from "mongoose"
 import bcrypt from 'bcrypt'
+import jwtToken from 'jsonwebtoken'
+import { configDotenv } from "dotenv"
+configDotenv()
+
 
 // creating user schema
 const userSchema = new mongoose.Schema({
@@ -7,6 +11,17 @@ const userSchema = new mongoose.Schema({
         type: 'String',
         require : [true,'name is a required field'],
         trim: true
+    },
+    email:{
+        type:'String',
+        required: [true,`Email is a required field`] ,
+        trim: true ,
+        unique: true ,
+        match: [
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            'Please fill in a valid email address'
+          ] 
+
     },
     // take username as PRN
     userName: {
@@ -45,9 +60,26 @@ userSchema.pre('save', async function (next)  {
 
 
 // creating methods for userSchema
-// userSchema.methods = {
+userSchema.methods = {
+    generateJWTtoken: async function () {
+        return await jwtToken.sign(
+            {
+                id: this._id,
+                email: this.email,
+                role: this.role,
+                userName: this.userName
+            },
+            process.env.SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRY
+            }
+        )
+    },
 
-// }
+    comparePassword: async function (plainTextPassword) {
+        return await bcrypt.compare(plainTextPassword,this.password)
+    }
+}
 
 const user = model('User',userSchema)
 

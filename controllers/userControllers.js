@@ -1,10 +1,19 @@
 import user from "../models/userModule.js"
 
+
+// creating cookie configurations
+const cookieOptions = {
+    maxAge: 7*24*60*60*1000, // 7 days (in milli-seconds)
+    httpOnly: true,
+    secure: false
+}
+
+
 const signup = async (req,res) => {
     try {
-        const {fullName,userName,password} = req.body
+        const {fullName,email,userName,password} = req.body
 
-        if(!fullName || !userName || !password){
+        if(!fullName || !userName || !password || !email){
             res.status(500).json({
                 success: false,
                 message: 'All fields are required !'
@@ -22,6 +31,7 @@ const signup = async (req,res) => {
 
         const newUser = await user.create({
             fullName,
+            email,
             userName,
             password
         })
@@ -33,12 +43,25 @@ const signup = async (req,res) => {
             })
         }
 
+        // saving user to DB
         await newUser.save()
 
+        // generating token
+        const token = await newUser.generateJWTtoken()
+
+        // putting token into cookie & sending cookie into response
+        res.cookie('token',token,cookieOptions)
+
+        // setting pasword as undefined so that user cannot get the password in return when we send user-obj in response as shown below
+        newUser.password = undefined
+
+        // sending success response
         res.status(200).json({
             success: true,
-            message: 'User created successfully !'
+            message: 'User created successfully !',
+            newUser
         })
+
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -63,13 +86,22 @@ const signin = async (req,res) => {
 
         const existingUser = await user.findOne({userName}).select('+password')
 
-        if(!existingUser || password !== existingUser.password){
+        if(!existingUser || !(await existingUser.comparePassword(password))){
             res.status(500).json({
                 success: false,
                 message: 'username and password wont match !'
             })
         }
 
+        // generating token
+        const token = await existingUser.generateJWTtoken()
+
+        // putting token into coookie & sending it in response
+        res.cookie('token',token,cookieOptions)
+
+        existingUser.password = undefined
+
+        // login success message/response
         res.status(200).json({
             success: true,
             message: 'Logged in successfully !',
