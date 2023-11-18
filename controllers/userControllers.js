@@ -11,7 +11,7 @@ const cookieOptions = {
 
 const signup = async (req,res) => {
     try {
-        const {fullName,email,userName,password} = req.body
+        const {fullName,email,userName,password,role} = req.body
 
         if(!fullName || !userName || !password || !email){
             res.status(500).json({
@@ -33,7 +33,8 @@ const signup = async (req,res) => {
             fullName,
             email,
             userName,
-            password
+            password,
+            role
         })
 
         if(!newUser){
@@ -73,7 +74,7 @@ const signup = async (req,res) => {
 
 const signin = async (req,res) => {
     try {
-        const {userName,password} = req.body
+        const {userName,password,role} = req.body
 
         if(!userName || !password){
             res.status(500).json({

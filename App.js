@@ -3,7 +3,7 @@ import connectToDB from "./config/dbConnection.js";
 
 import userRoute from './routes/userRoutes.js'
 import cookieParser from "cookie-parser";
-
+import companyRoutes from "./routes/companyRoutes.js";
 const app = express()
 
 // connecting with DB
@@ -24,7 +24,7 @@ app.use('/ping',(req,res)=>{
 })
 
 app.use('/user',userRoute)
-
+app.use('/company',companyRoutes)
 
 
 // for wrong requests
